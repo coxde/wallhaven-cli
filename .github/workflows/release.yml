@@ -1,0 +1,43 @@
+name: Release Application
+on:
+    paths:
+        - 'version'
+
+    workflow_dispatch:
+
+jobs:
+    publish:
+        name: Build & Release app
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clone codebase
+              uses: actions/checkout@v2
+
+            - name: Get tag name
+              id: tag
+              run: echo ::set-output name=name::$(cat version)`
+
+            - name: Setup node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 20
+
+            - name: Install project dependencies
+              run: npm install
+
+            - name: Install packager
+              run: npm install -g pkg
+
+            - name: Package application
+              run: pkg -t latest-linux-x64 wallhaven-cli.mjs
+
+            - name: Release asset
+              uses: softprops/action-gh-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ steps.tag.outputs.name }}
+                  draft: false
+                  prerelease: false
+                  files: |
+                      wallhaven-cli*
