@@ -1,5 +1,10 @@
 import { Command } from 'commander';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
+
 const program = new Command();
+let url = 'https://wallhaven.cc/api/v1/search?';
 
 const categoryPicker = function (category) {
     const categoryCodes = {
@@ -10,10 +15,8 @@ const categoryPicker = function (category) {
         ga: '110',
         gp: '101',
     };
-    let categoryCode = categoryCodes[category];
 
-    // console.log(`${categoryCode}`);
-    return categoryCode;
+    return categoryCodes[category];
 };
 
 const purityPicker = function (purity) {
@@ -26,10 +29,49 @@ const purityPicker = function (purity) {
         sn: '011',
         all: '111',
     };
-    let purityCode = purityCodes[purity];
 
-    // console.log(`${purityCode}`);
-    return purityCode;
+    return purityCodes[purity];
+};
+
+const imageDownloader = function (url) {
+    fetch(url)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((json) => {
+            json.data.forEach((imageObject) => {
+                let imageUrl = imageObject.path;
+
+                // actually download the images
+                https.get(imageUrl, (res) => {
+                    const fileName = path.basename(imageUrl);
+                    const writeStream = fs.createWriteStream(fileName);
+
+                    if (res.statusCode !== 200) {
+                        console.error(
+                            `Failed to download image ${fileName}. Status code: ${res.statusCode}`,
+                        );
+                        return;
+                    }
+
+                    res.pipe(writeStream);
+
+                    writeStream.on('finish', () => {
+                        writeStream.close();
+                        console.log(`Download Completed: ${fileName}`);
+                    });
+                });
+            });
+        })
+        .catch((error) => {
+            console.error(
+                'There was a problem fetching the image metadata:',
+                error,
+            );
+        });
 };
 
 program
@@ -37,6 +79,7 @@ program
     .description('A CLI tool to download images from wallhaven')
     .version('0.1.0');
 
+// download command
 program
     .command('download')
     .description('Download images from wallhaven')
@@ -50,29 +93,35 @@ program
         'image purity (options: "all", "sfw", "sketchy", "nsfw", "ws", "wn", "sn")',
         'sfw',
     )
-    .option('-o, --order <value>', 'sorting order (options: desc, asc)', 'desc')
+    .option(
+        '-o, --order <value>',
+        'image sorting order (options: desc, asc)',
+        'desc',
+    )
     .option(
         '-t, --topRange <value>',
-        'time range of top list (options: 1d, 3d, 1w, 1M, 3M, 6M, 1y)',
+        'image time range (top list) (options: 1d, 3d, 1w, 1M, 3M, 6M, 1y)',
         '1M',
     )
     .option(
         '-r, --ratio <value>',
         'image ratio (options: 16x9, 16x10, 4x3, 1x1)',
     )
-    .option('-P, --pages <value>', 'downloaded image pages', '1')
+    .option('-P, --page <value>', 'image pagination (24 images per page)', '1')
+
     .action((options) => {
-        if (options.category)
-            console.log(
-                `Category: ${options.category}, ${categoryPicker(
-                    options.category,
-                )}`,
-            );
-        if (options.purity)
-            console.log(
-                `Purity: ${options.purity}, ${purityPicker(options.purity)}`,
-            );
-        if (options.pages) console.log(`Pages: ${options.pages}`);
+        // generate the final url
+        url += `&categories=${categoryPicker(
+            options.category,
+        )}&purity=${purityPicker(options.purity)}&order=${
+            options.order
+        }&topRange=${options.topRange}&page=${options.page}`;
+
+        // add ratio to url if exists
+        if (options.ratio) url += `&ratios=${options.ratio}`;
+
+        // download images
+        imageDownloader(url);
     });
 
 program.parse();
