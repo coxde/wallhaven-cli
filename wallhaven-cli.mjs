@@ -43,14 +43,24 @@ program
     .option(
         '-c, --category <value>',
         'image category (options: "all", "general", "anime", "people", "ga", "gp")',
-        'ga',
+        'all',
     )
     .option(
         '-p, --purity <value>',
         'image purity (options: "all", "sfw", "sketchy", "nsfw", "ws", "wn", "sn")',
         'sfw',
     )
-    .option('-P, --pages <number>', 'downloaded image pages', '1')
+    .option('-o, --order <value>', 'sorting order (options: desc, asc)', 'desc')
+    .option(
+        '-t, --topRange <value>',
+        'time range of top list (options: 1d, 3d, 1w, 1M, 3M, 6M, 1y)',
+        '1M',
+    )
+    .option(
+        '-r, --ratio <value>',
+        'image ratio (options: 16x9, 16x10, 4x3, 1x1)',
+    )
+    .option('-P, --pages <value>', 'downloaded image pages', '1')
     .action((options) => {
         if (options.category)
             console.log(
