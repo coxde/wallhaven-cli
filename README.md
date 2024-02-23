@@ -35,10 +35,13 @@ Arguments:
   pages                   image pagination (24 images per page)
 
 Options:
+  -a, --api [value]       api key
   -c, --category <value>  image category (options: "all", "general", "anime", "people", "ga", "gp") (default: "all")
   -p, --purity <value>    image purity (options: "all", "sfw", "sketchy", "nsfw", "ws", "wn", "sn") (default: "sfw")
+  -s, --sorting <value>   image sorting method (options: "date_added", "relevance", "random", "views", "favorites", "toplist")
+                          (default: "toplist")
   -o, --order <value>     image sorting order (options: desc, asc) (default: "desc")
-  -t, --topRange <value>  image time range (top list) (options: 1d, 3d, 1w, 1M, 3M, 6M, 1y) (default: "1M")
+  -t, --topRange <value>  image time range (only for toplist) (options: 1d, 3d, 1w, 1M, 3M, 6M, 1y) (default: "1M")
   -r, --ratio [value]     image ratio (options: 16x9, 16x10, 4x3, 1x1)
   -h, --help              display help for command
 ```
