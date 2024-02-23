@@ -6,9 +6,12 @@ on:
 
     workflow_dispatch:
 
+permissions:
+    contents: write
+
 jobs:
     publish:
-        name: Build & Release app
+        name: Release app
         runs-on: ubuntu-latest
         steps:
             - name: Clone codebase
@@ -18,20 +21,6 @@ jobs:
               id: tag
               run: echo "version=$(cat version)" >> $GITHUB_OUTPUT
 
-            - name: Setup node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-
-            - name: Install project dependencies
-              run: npm install
-
-            - name: Install packager
-              run: npm install -g pkg
-
-            - name: Package application
-              run: pkg -t latest-linux-x64 wallhaven-cli.mjs
-
             - name: Release asset
               uses: softprops/action-gh-release@v1
               env:
@@ -40,5 +29,3 @@ jobs:
                   tag_name: ${{ steps.tag.outputs.version }}
                   draft: false
                   prerelease: false
-                  files: |
-                      wallhaven-cli*
