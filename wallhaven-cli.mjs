@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Command } from 'commander';
 import https from 'https';
 import fs from 'fs';
@@ -77,7 +79,7 @@ const imageDownloader = function (url) {
 program
     .name('wallhaven-cli')
     .description('A CLI tool to download images from wallhaven')
-    .version('0.2.1');
+    .version('0.2.2');
 
 // download command
 program

@@ -6,9 +6,11 @@ A CLI tool to download images from [wallhaven.cc](https://wallhaven.cc/)
 
 ## 📦 Installation
 
-1. Clone this repository or download source code from [release](https://github.com/coxde/wallhaven-cli/releases) page
-2. Run `npm install` to install dependencies
-3. Run `node ./wallhaven-cli.mjs` to use it
+1. Make sure you have installed [Node.js](https://nodejs.org/) and [NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+2. Clone this repository or download source code from [release](https://github.com/coxde/wallhaven-cli/releases) page
+3. Run `npm install` to install dependencies
+4. Run `npm install -g .` to install wallhaven-cli
+5. Run `wallhaven-cli` to use wallhaven-cli
 
 ## ⚙️ Usage
 

@@ -1,5 +1,8 @@
 {
     "name": "wallhaven-cli",
+    "version": "0.2.2",
+    "description": "A CLI tool to download images from wallhaven",
+    "bin": "wallhaven-cli.mjs",
     "dependencies": {
         "commander": "^12.0.0"
     }
