@@ -77,13 +77,14 @@ const imageDownloader = function (url) {
 program
     .name('wallhaven-cli')
     .description('A CLI tool to download images from wallhaven')
-    .version('0.1.0');
+    .version('0.2.1');
 
 // download command
 program
     .command('download')
     .description('Download images from wallhaven')
     .argument('<pages>', 'image pagination (24 images per page)')
+    .option('-a, --api [value]', 'api key')
     .option(
         '-c, --category <value>',
         'image category (options: "all", "general", "anime", "people", "ga", "gp")',
@@ -95,13 +96,18 @@ program
         'sfw',
     )
     .option(
+        '-s, --sorting <value>',
+        'image sorting method (options: "date_added", "relevance", "random", "views", "favorites", "toplist")',
+        'toplist',
+    )
+    .option(
         '-o, --order <value>',
         'image sorting order (options: desc, asc)',
         'desc',
     )
     .option(
         '-t, --topRange <value>',
-        'image time range (top list) (options: 1d, 3d, 1w, 1M, 3M, 6M, 1y)',
+        'image time range (only for toplist) (options: 1d, 3d, 1w, 1M, 3M, 6M, 1y)',
         '1M',
     )
     .option(
@@ -113,12 +119,15 @@ program
         // generate the final url
         url += `&categories=${categoryPicker(
             options.category,
-        )}&purity=${purityPicker(options.purity)}&order=${
-            options.order
-        }&topRange=${options.topRange}&page=${pages}`;
+        )}&purity=${purityPicker(options.purity)}&sorting=${
+            options.sorting
+        }&order=${options.order}&topRange=${options.topRange}&page=${pages}`;
 
         // add ratio to url if exists
         if (options.ratio) url += `&ratios=${options.ratio}`;
+
+        // add api key to url if exists
+        if (options.api) url += `&apikey=${options.api}`;
 
         // download images
         imageDownloader(url);
