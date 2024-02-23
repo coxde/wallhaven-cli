@@ -83,6 +83,7 @@ program
 program
     .command('download')
     .description('Download images from wallhaven')
+    .argument('<pages>', 'image pagination (24 images per page)')
     .option(
         '-c, --category <value>',
         'image category (options: "all", "general", "anime", "people", "ga", "gp")',
@@ -104,18 +105,17 @@ program
         '1M',
     )
     .option(
-        '-r, --ratio <value>',
+        '-r, --ratio [value]',
         'image ratio (options: 16x9, 16x10, 4x3, 1x1)',
     )
-    .option('-P, --page <value>', 'image pagination (24 images per page)', '1')
 
-    .action((options) => {
+    .action((pages, options, command) => {
         // generate the final url
         url += `&categories=${categoryPicker(
             options.category,
         )}&purity=${purityPicker(options.purity)}&order=${
             options.order
-        }&topRange=${options.topRange}&page=${options.page}`;
+        }&topRange=${options.topRange}&page=${pages}`;
 
         // add ratio to url if exists
         if (options.ratio) url += `&ratios=${options.ratio}`;
